@@ -47,20 +47,21 @@ public class Bukvar {
 
     // Метод для добавления буквы
     public void addLetter(char letter, int count) {
-        int i = findLetter(letter);
-        if (i != -1) {
-            counts[i] += count; // Если буква есть, увеличиваем её количество
-        } else {
-            // Если буквы нет, добавляем ее
+        int i = findLetter(letter); // индексу внутри метода присваивается индекс, из найденной буквы
+        if (i != -1) { //
+            counts[i] += count; // если буква есть, увеличиваем её количество
+        }
+        else {
+            // если буквы нет, добавляем ее
             if (size == letters.length) {
                 resizeArrays(); // увеличиваем массив, если нужно
             }
             letters[size] = letter;
-            counts[size] = count;
+            counts[size] = count; // присваиваем значения
             size++;
         }
     }
-
+    // вывод в форматах
     public String toString(int format) {
         if (format == 1) {
             return format1();
@@ -75,10 +76,13 @@ public class Bukvar {
 
     // Формат вывода 1: "aaaaa c kkk"
     private String format1() {
-        StringBuilder sb = new StringBuilder(); // для удобства
+        StringBuilder sb = new StringBuilder();
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < counts[i]; j++) {
                 sb.append(letters[i]);
+            }
+            if (i < size - 1) {  // Добавляем пробел, если это не последняя буква
+                sb.append(" ");
             }
         }
         return sb.toString();
@@ -204,16 +208,13 @@ public class Bukvar {
     // Достаточно сложный метод
     public int countPossibleWords(String word) {
         if (!canBuildWord(word)) {
-            return 0; // Если слово нельзя составить - 0
+            return 0;
         }
         int minCount = Integer.MAX_VALUE;
         char[] wordChars = word.toCharArray();
-        int[] tempCounts = new int[counts.length]; // временный массив для хранения количества букв
-        for(int i = 0; i < size; i++){ // копируем основные данные во временный массив
-            tempCounts[i] = counts[i];
-        }
+
         for (char letter: wordChars) {
-            int i = findLetterInCopy(letter, letters, size); // ищем индекс
+            int i = findLetter(letter); // ищем индекс в исходном массиве
             if(i == -1){
                 return 0;
             }
@@ -222,7 +223,7 @@ public class Bukvar {
                 if (letter == l)
                     letterCount++; // считаем сколько раз буква повторяется в слове
             }
-            minCount = Math.min(minCount, tempCounts[i] / letterCount); // минимум раз
+            minCount = Math.min(minCount, counts[i] / letterCount); // используем исходный counts[i]
         }
         return minCount;
     }
